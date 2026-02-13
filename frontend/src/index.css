@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Optional: Add a global reset or font here if desired */
+body {
+    @apply bg-gray-50 text-slate-900;
+}
