@@ -35,3 +35,7 @@ docker-compose up -d --build
 # Create Database Schema
 docker-compose exec php bin/console doctrine:schema:update --force
 ```
+
+## Debugging
+
+XDebug is available and will attempt to connect to the debugger on your local machine at the start of every request. `xdebug.idekey` is configured as `XDEBUG`.
