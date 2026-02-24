@@ -3,10 +3,13 @@ import {Link} from 'react-router-dom';
 import {useInvoiceNotifications} from '../hooks/useWebSocket';
 
 interface Invoice {
-    id: number;
-    amount: number;
-    reference: string;
-    formattedAmount?: string; // Optional if your backend sends virtual properties
+    readonly balance: number;
+    readonly paid: number;
+    readonly status: "paid" | "pending";
+    readonly id: number;
+    readonly amount: number;
+    readonly reference: string;
+    readonly formattedAmount?: string; // Optional if your backend sends virtual properties
 }
 
 export const InvoiceList: React.FC = () => {
@@ -57,6 +60,7 @@ export const InvoiceList: React.FC = () => {
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reference</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                         <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                     </tr>
                     </thead>

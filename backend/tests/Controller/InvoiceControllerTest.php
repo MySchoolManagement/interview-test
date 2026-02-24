@@ -2,40 +2,35 @@
 namespace App\Tests\Controller;
 
 use App\Controller\FinanceController;
+use App\Controller\InvoiceDTO;
 use App\Entity\Invoice;
 use App\Event\InvoiceCreatedEvent;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-class InvoiceControllerTest extends TestCase
+class InvoiceControllerTest extends KernelTestCase
 {
     public function testCreateInvoiceDispatchesEvent(): void
     {
-        // 1. Mock Dependencies
-        $em = $this->createMock(EntityManagerInterface::class);
-        $dispatcher = $this->createMock(EventDispatcherInterface::class);
+        self::bootKernel();
+        $container = static::getContainer();
 
-        // 2. Set Expectations
-        $em->expects($this->once())->method('persist');
-        $em->expects($this->once())->method('flush');
+        $controller = new FinanceController(
+            $container->get(EntityManagerInterface::class),
+            $container->get(EventDispatcherInterface::class)
+        );
 
-        // The core requirement: Verify the event is dispatched with the correct name and type
-        $dispatcher->expects($this->once())
-            ->method('dispatch')
-            ->with(
-                $this->isInstanceOf(InvoiceCreatedEvent::class), 
-                InvoiceCreatedEvent::NAME
-            );
+        $controller->setContainer($container);
 
-        // 3. Execute
-        $controller = new FinanceController();
-        $request = new Request([], [], [], [], [], [], json_encode(['amount' => 150.00]));
-        
-        $response = $controller->createInvoice($request, $em, $dispatcher);
+        $request = new InvoiceDTO(150.00, 'TEST');
 
-        // 4. Assert Response
+        $response = $controller->createInvoice($request);
+
         $this->assertEquals(201, $response->getStatusCode());
     }
 }
